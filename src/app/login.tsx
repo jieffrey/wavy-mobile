@@ -1,10 +1,10 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useRef, useState, type ComponentRef } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, TextInput, View } from 'react-native';
 import Animated, { FadeInLeft, FadeInRight, ReduceMotion } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { LoginBackdrop } from '@/components/brand/login-backdrop';
 import { WavyLogo } from '@/components/brand/wavy-logo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -120,12 +120,9 @@ export default function LoginScreen() {
   return (
     <View className="flex-1 bg-background">
       <StatusBar style="light" />
-      {/* Panel brand: gradient pink → ungu seperti panel kiri login web */}
-      <LinearGradient
-        colors={[colors.primary, colors['primary-glow']]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        className="pb-10">
+      {/* Panel brand: latar yang sama dengan panel kiri login web (login-otp.png) */}
+      <View className="overflow-hidden pb-10">
+        <LoginBackdrop />
         <SafeAreaView edges={['top']} className="items-start gap-3 px-6 pt-10">
           <View className="flex-row items-center gap-3">
             <WavyLogo size={44} color={colors['primary-foreground']} />
@@ -135,7 +132,7 @@ export default function LoginScreen() {
           </View>
           <Text className="text-base text-primary-foreground/90">{t('Auth.tagline')}</Text>
         </SafeAreaView>
-      </LinearGradient>
+      </View>
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className="-mt-6 flex-1">
         <ScrollView

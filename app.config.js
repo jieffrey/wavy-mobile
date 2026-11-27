@@ -33,7 +33,8 @@ module.exports = {
       [
         'expo-splash-screen',
         {
-          backgroundColor: colors.primary,
+          // = warna dasar latar login web (tokens.backdrop), lanjut mulus ke AnimatedSplash
+          backgroundColor: colors.backdrop,
           image: './assets/images/splash-icon.png',
           imageWidth: 96,
         },
