@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { Search } from 'lucide-react-native';
+import { Bell, Search } from 'lucide-react-native';
 import { FlatList, Pressable, RefreshControl, ScrollView, useWindowDimensions, View } from 'react-native';
 
 import { ConcertCard, FeaturedConcertCard } from '@/components/concerts/concert-card';
@@ -7,6 +7,7 @@ import { Screen } from '@/components/ui/screen';
 import { EmptyState, ErrorState, LoadingState } from '@/components/ui/states';
 import { Text } from '@/components/ui/text';
 import { useApiResource } from '@/hooks/use-api-resource';
+import { useNotifications } from '@/hooks/use-notifications';
 import { t } from '@/i18n';
 import { apiGet } from '@/lib/api';
 import { useSession } from '@/store/session';
@@ -35,6 +36,8 @@ export default function HomeScreen() {
   const { width } = useWindowDimensions();
   const featured = useApiResource('homepage', () => apiGet<HomepageResponse>('/homepage'));
   const latest = useApiResource('concerts-latest', () => apiGet<Concert[]>('/concerts'));
+  // Hanya untuk titik "belum dibaca"; gagal memuat = titik tidak tampil (daftarnya punya state error sendiri).
+  const notifications = useNotifications('notifications-home');
 
   const featuredList = featured.data?.featured_events ?? [];
   const latestList = (latest.data ?? []).slice(0, LATEST_COUNT);
@@ -58,11 +61,27 @@ export default function HomeScreen() {
             colors={[colors.primary]}
           />
         }>
-        <View className="gap-1 px-4 pb-4 pt-2">
-          <Text variant="display" className="text-2xl" accessibilityRole="header">
-            {name ? t('Home.greeting', { name }) : t('Home.greetingFallback')}
-          </Text>
-          <Text className="text-muted-foreground">{t('Home.subtitle')}</Text>
+        <View className="flex-row items-start gap-3 px-4 pb-4 pt-2">
+          <View className="flex-1 gap-1">
+            <Text variant="display" className="text-2xl" accessibilityRole="header">
+              {name ? t('Home.greeting', { name }) : t('Home.greetingFallback')}
+            </Text>
+            <Text className="text-muted-foreground">{t('Home.subtitle')}</Text>
+          </View>
+          <Pressable
+            onPress={() => router.push('/notifications')}
+            accessibilityRole="button"
+            accessibilityLabel={
+              notifications.unread > 0
+                ? `${t('Profile.menu.notifications')}, ${t('Profile.menu.unread', { count: notifications.unread })}`
+                : t('Profile.menu.notifications')
+            }
+            className="h-11 w-11 items-center justify-center rounded-full border border-border active:bg-muted">
+            <Bell color={colors.foreground} size={20} />
+            {notifications.unread > 0 ? (
+              <View className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full border-2 border-background bg-primary" />
+            ) : null}
+          </Pressable>
         </View>
 
         <Pressable
