@@ -1,10 +1,11 @@
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { CalendarDays, MapPin, Star, UserRound } from 'lucide-react-native';
 import type { ReactNode } from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
 
 import { BuyBar } from '@/components/concerts/buy-bar';
 import { BackHeader } from '@/components/ui/back-header';
+import { Button } from '@/components/ui/button';
 import { SalesBadge } from '@/components/ui/badge';
 import { CollapsibleText } from '@/components/ui/collapsible-text';
 import { EventPoster } from '@/components/ui/event-poster';
@@ -188,7 +189,17 @@ export default function ConcertDetailScreen() {
           </View>
         </View>
       </ScrollView>
-      <BuyBar concert={c} />
+      <BuyBar
+        concert={c}
+        action={
+          <Button
+            label={t('Sales.buy')}
+            disabled={c.sales_status !== 'open' || c.ticket_categories.length === 0}
+            onPress={() => router.push({ pathname: '/concerts/[id]/checkout', params: { id: String(c.id) } })}
+            className="px-6"
+          />
+        }
+      />
     </View>
   );
 }

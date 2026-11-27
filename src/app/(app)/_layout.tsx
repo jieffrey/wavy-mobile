@@ -7,6 +7,7 @@ export default function AppLayout() {
   return (
     <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}>
       <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="orders/[id]/pay" options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />
     </Stack>
   );
 }
