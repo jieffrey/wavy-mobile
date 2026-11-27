@@ -17,6 +17,7 @@ import { t } from '@/i18n';
 import { apiPost, ApiError } from '@/lib/api';
 import { cn } from '@/lib/cn';
 import { errorMessage } from '@/lib/error-message';
+import { buyerSchema, validateForm } from '@/lib/validation';
 import { formatDateTime, formatIDR } from '@/lib/format';
 import { htmlToText } from '@/lib/plain-text';
 import { salesNotOpen } from '@/lib/sales';
@@ -27,7 +28,6 @@ import type { TicketCategory } from '@/types/api';
 // Checkout (DESIGN §4 Column, versi HP): kategori → jumlah → data pemesan → S&K → ringkasan bawah.
 // Satu kategori per pesanan, maksimal 4 tiket (PRD + backend MAX_TICKETS_PER_ORDER).
 const MAX_TICKETS = 4;
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // Kode yang berarti pilihan tiket harus diulang setelah kuota terbaru dimuat (sama dengan web).
 const RESELECT_CODES = ['QUOTA_EXCEEDED', 'ORDER_EXPIRED', 'INVALID_QUANTITY'];
 
@@ -37,16 +37,6 @@ type Field = 'firstName' | 'email' | 'phone' | 'idNumber' | 'dob' | 'gender' | '
 
 const remainingOf = (c: TicketCategory) => c.remaining ?? Math.max(0, c.quota - c.sold);
 const isBuyable = (c: TicketCategory) => (c.sales_status ?? 'open') === 'open' && remainingOf(c) > 0;
-
-function validDob(day: string, month: string, year: string): boolean {
-  const d = Number(day);
-  const m = Number(month);
-  const y = Number(year);
-  if (!Number.isInteger(d) || !Number.isInteger(m) || !Number.isInteger(y)) return false;
-  if (year.length !== 4 || y < 1900 || y > new Date().getFullYear()) return false;
-  const date = new Date(y, m - 1, d);
-  return date.getFullYear() === y && date.getMonth() === m - 1 && date.getDate() === d && date <= new Date();
-}
 
 export default function CheckoutScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -127,22 +117,23 @@ export default function CheckoutScreen() {
     setFormError('');
   }
 
+  // zod (lib/validation buyerSchema): satu pesan per field, aturan sama dengan POST /orders
   function validate(): boolean {
-    const next: Partial<Record<Field, string>> = {};
-    const digits = phone.replace(/\D/g, '');
-    if (!firstName.trim()) next.firstName = t('Checkout.errors.firstName');
-    if (!email.trim()) next.email = t('Checkout.errors.emailRequired');
-    else if (!EMAIL_RE.test(email.trim())) next.email = t('Checkout.errors.emailInvalid');
-    if (!digits) next.phone = t('Checkout.errors.phoneRequired');
-    else if (digits.length < 9) next.phone = t('Checkout.errors.phoneShort');
-    if (!idNumber.trim()) next.idNumber = t('Checkout.errors.idNumber');
-    if (!dobDay || !dobMonth || !dobYear) next.dob = t('Checkout.errors.dobRequired');
-    else if (!validDob(dobDay, dobMonth, dobYear)) next.dob = t('Checkout.errors.dobInvalid');
-    if (!gender) next.gender = t('Checkout.errors.gender');
-    if (!agreeTerms) next.agreeTerms = t('Checkout.errors.agreeTerms');
-    if (!agreeData) next.agreeData = t('Checkout.errors.agreeData');
-    setErrors(next);
-    return Object.keys(next).length === 0;
+    const checked = validateForm<typeof buyerSchema, Field>(buyerSchema, {
+      firstName,
+      lastName,
+      email,
+      phone,
+      idNumber,
+      dobDay,
+      dobMonth,
+      dobYear,
+      gender,
+      agreeTerms,
+      agreeData,
+    });
+    setErrors(checked.errors ?? {});
+    return checked.errors === null;
   }
 
   async function submit() {

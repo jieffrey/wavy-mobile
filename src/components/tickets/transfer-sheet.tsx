@@ -10,10 +10,9 @@ import { Text } from '@/components/ui/text';
 import { t } from '@/i18n';
 import { apiPost, ApiError } from '@/lib/api';
 import { errorMessage } from '@/lib/error-message';
+import { transferSchema, validateForm } from '@/lib/validation';
 import { colors } from '@/theme/tokens';
 import type { Ticket } from '@/types/api';
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // Backend mengirim error transfer sebagai teks (tanpa kode). Petakan yang dikenal ke teks UI.
 function transferError(err: unknown): string {
@@ -40,6 +39,7 @@ export function TransferSheet({
   onTransferred: (email: string) => void;
 }) {
   const [email, setEmail] = useState('');
+  const [fieldError, setFieldError] = useState('');
   const [error, setError] = useState('');
   const [sending, setSending] = useState(false);
 
@@ -47,15 +47,15 @@ export function TransferSheet({
     if (sending) return;
     setEmail('');
     setError('');
+    setFieldError('');
     onClose();
   }
 
   async function submit() {
-    const to = email.trim();
-    if (!EMAIL_RE.test(to)) {
-      setError(t('Tickets.transfer.invalidEmail'));
-      return;
-    }
+    const checked = validateForm(transferSchema, { to_email: email });
+    setFieldError(checked.errors?.to_email ?? '');
+    if (!checked.data) return;
+    const to = checked.data.to_email;
     setError('');
     setSending(true);
     try {
@@ -92,7 +92,9 @@ export function TransferSheet({
             onChangeText={(v) => {
               setEmail(v);
               setError('');
+              setFieldError('');
             }}
+            error={fieldError}
             autoCapitalize="none"
             autoCorrect={false}
             keyboardType="email-address"
