@@ -33,7 +33,7 @@ HP tidak bisa membuka `localhost` milik laptop, jadi alamat backend harus memaka
    ```
    Wajib diakhiri `/api/v1`, tanpa garis miring di akhir. Setiap kali `.env` diubah, hentikan Expo lalu
    jalankan ulang dengan `npx expo start -c` (nilai `EXPO_PUBLIC_*` ditanam saat bundling).
-3. **Cek dari HP**: buka browser HP ke `http://192.168.1.10:1420/api/v1/health`. Harus muncul
+3. **Cek dari HP**: buka browser HP ke `http://192.168.1.10:1420/health` (health ada di root, bukan di bawah `/api/v1`). Harus muncul
    `{"status":"ok"}`. Kalau tidak terbuka, lihat bagian *Masalah umum*.
 4. **Jalankan Expo**:
    ```bash
