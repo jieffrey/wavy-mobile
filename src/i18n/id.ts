@@ -1,5 +1,29 @@
 // Teks UI bahasa Indonesia. Kunci dan isi mengikuti wavy-next/src/messages/id.json bila ada padanannya.
 export const id = {
+  Onboarding: {
+    skip: 'Lewati',
+    next: 'Lanjut',
+    start: 'Mulai',
+    progress: 'Langkah {step} dari {total}',
+    slide1: {
+      kicker: '01 · temukan',
+      title: 'Konser favoritmu,\nsatu genggaman.',
+      body: 'Cari artis atau konser, saring per kategori, dan lihat status penjualan tiketnya langsung.',
+      search: 'Cari konser, artis...',
+    },
+    slide2: {
+      kicker: '02 · amankan',
+      title: 'Pilih tiket,\nkunci 15 menit.',
+      body: 'Satu kategori, maksimal 4 tiket per pesanan. Bayar lewat Midtrans sebelum waktunya habis.',
+    },
+    slide3: {
+      kicker: '03 · masuk',
+      title: 'Tunjukkan QR,\nlangsung masuk.',
+      body: 'E-tiket resmi tersimpan di HP-mu. Satu QR untuk satu kali scan di gate.',
+      valid: 'Valid',
+      gate: 'Akses gate',
+    },
+  },
   Tabs: {
     home: 'Beranda',
     explore: 'Jelajah',

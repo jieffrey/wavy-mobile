@@ -16,10 +16,13 @@ import { useFonts } from 'expo-font';
 import { DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useCallback, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { AnimatedSplash } from '@/components/brand/animated-splash';
+import { Onboarding } from '@/components/onboarding/onboarding';
+import { OnboardingProvider, useOnboarding } from '@/store/onboarding';
 import { SessionProvider, useSession } from '@/store/session';
 import { colors } from '@/theme/tokens';
 
@@ -57,9 +60,11 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <ThemeProvider value={navTheme}>
           <SessionProvider>
-            <StatusBar style="dark" />
-            {/* Font gagal dimuat = pakai font sistem, jangan blokir app. */}
-            {fontsLoaded || fontError ? <RootNavigator /> : null}
+            <OnboardingProvider>
+              <StatusBar style="dark" />
+              {/* Font gagal dimuat = pakai font sistem, jangan blokir app. */}
+              {fontsLoaded || fontError ? <RootNavigator /> : null}
+            </OnboardingProvider>
           </SessionProvider>
         </ThemeProvider>
       </SafeAreaProvider>
@@ -69,17 +74,20 @@ export default function RootLayout() {
 
 function RootNavigator() {
   const { status } = useSession();
-  const ready = status !== 'loading';
+  const onboarding = useOnboarding();
+  const [splashDone, setSplashDone] = useState(false);
+  const finishSplash = useCallback(() => setSplashDone(true), []);
 
-  useEffect(() => {
-    if (ready) SplashScreen.hide();
-  }, [ready]);
-
-  if (!ready) return null; // splash native masih tampil
+  // Splash native tetap tampil sampai sesi & flag onboarding terbaca; AnimatedSplash yang menyembunyikannya.
+  if (status === 'loading' || !onboarding.ready) return null;
 
   return (
-    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}>
-      <Stack.Screen name="(tabs)" />
-    </Stack>
+    <>
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}>
+        <Stack.Screen name="(tabs)" />
+      </Stack>
+      {splashDone && onboarding.visible ? <Onboarding onSkip={onboarding.finish} onStart={onboarding.finish} /> : null}
+      {!splashDone ? <AnimatedSplash onDone={finishSplash} /> : null}
+    </>
   );
 }
