@@ -30,10 +30,24 @@ Dependensi baru (versi dikunci): `three@0.187.0`, `@react-three/fiber@9.8.2`, `e
 
 **Belum dicek: perilaku di HP nyata.** Tidak ada perangkat/emulator Android yang terhubung di mesin ini.
 
+## Uji HP #1 — gagal, sudah diperbaiki
+
+**Gejala:** `TypeError: undefined is not a function` di `node_modules/three/build/three.cjs:12` saat membuka Spike 3D.
+**Sebab:** `@react-three/fiber/native` memakai `require('three')`; Metro memilih kondisi `require` di `exports` three → `build/three.cjs`, yang mulai three 0.18x memanggil `process.emitWarning` (tidak ada di React Native). Typecheck, lint, dan `expo export` tidak menangkapnya karena ini error saat runtime.
+**Perbaikan:** `metro.config.js` → `resolver.resolveRequest` mengarahkan import persis `'three'` ke `build/three.module.js`; subpath lain tetap lewat resolver bawaan. Polyfill `process.emitWarning` (rencana cadangan) tidak diperlukan.
+
+| Verifikasi (bundle Android `--no-bytecode --no-minify`) | Sebelum | Sesudah |
+|---|---|---|
+| String `THREE_CJS_DEPRECATED` / `emitWarning` | 1 / ada | 0 / 0 |
+| `three/examples/jsm/utils/BufferGeometryUtils.js`, `three/addons/geometries/RoundedBoxGeometry.js` (import sementara, sudah dihapus) | — | ter-bundle |
+| Salinan three (`REVISION = '187'`, `class WebGLRenderer`) | 1 | 1 |
+| `npm ls three` | `three@0.187.0` + deduped di r3f | sama |
+| Export Hermes Android / iOS | lolos | lolos (9,5 / 9,3 MB) |
+
 ## Cara uji di HP (Expo Go)
 
-1. `git switch spike/venue-3d-expo-go && npm install`
-2. `npx expo start --port 3001` → scan QR dengan Expo Go (HP & laptop satu Wi-Fi).
+1. `git switch spike/venue-3d-expo-go && git pull && npm install`
+2. `npx expo start --port 3001 --clear` → scan QR dengan Expo Go (HP & laptop satu Wi-Fi). `--clear` wajib setelah `metro.config.js` berubah, supaya cache resolver lama tidak dipakai.
 3. Di layar Masuk, tekan **Spike 3D** (kanan bawah).
 4. Isi tabel di bawah untuk **1 Android kelas menengah** dan **1 iPhone**. Kotak metrik kiri atas menampilkan angkanya.
 
