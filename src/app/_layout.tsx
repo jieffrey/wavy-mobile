@@ -89,7 +89,7 @@ function RootNavigator() {
     <>
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}>
         <Stack.Protected guard={signedIn} redirectTo="/login">
-          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="(app)" />
         </Stack.Protected>
         <Stack.Protected guard={!signedIn} redirectTo="/">
           <Stack.Screen name="login" />
