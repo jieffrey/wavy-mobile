@@ -10,12 +10,15 @@ const TIMEOUT_MS = 15000;
 export class ApiError extends Error {
   status: number;
   code?: string;
+  /** data tambahan pada error berkode, mis. { field } untuk VALIDATION_ERROR */
+  details: Record<string, unknown>;
 
-  constructor(status: number, message: string, code?: string) {
+  constructor(status: number, message: string, code?: string, details: Record<string, unknown> = {}) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
     this.code = code;
+    this.details = details;
   }
 }
 
@@ -27,11 +30,12 @@ export function parseApiError(status: number, body: unknown): ApiError {
   const err = body && typeof body === 'object' ? (body as { error?: unknown }).error : undefined;
   if (typeof err === 'string' && err.trim()) return new ApiError(status, err);
   if (err && typeof err === 'object') {
-    const { code, message } = err as { code?: unknown; message?: unknown };
+    const { code, message, ...details } = err as { code?: unknown; message?: unknown } & Record<string, unknown>;
     return new ApiError(
       status,
       typeof message === 'string' && message.trim() ? message : fallback,
-      typeof code === 'string' ? code : undefined
+      typeof code === 'string' ? code : undefined,
+      details
     );
   }
   return new ApiError(status, fallback);

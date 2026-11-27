@@ -1,10 +1,10 @@
-import * as SecureStore from 'expo-secure-store';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
 import { setApiToken, setUnauthorizedHandler } from '@/lib/api';
+import { deviceStorage } from '@/lib/device-storage';
 import type { Customer } from '@/types/api';
 
-// Sesi customer: token JWT dari POST /auth/verify-otp disimpan di expo-secure-store.
+// Sesi customer: token JWT dari POST /auth/verify-otp disimpan di expo-secure-store (localStorage di Expo web).
 // 401 dari request ber-token -> sesi dihapus -> Stack.Protected memindahkan user ke /login.
 const TOKEN_KEY = 'wavy.auth.token';
 const CUSTOMER_KEY = 'wavy.auth.customer';
@@ -29,7 +29,7 @@ export function useSession() {
 }
 
 async function clearStored() {
-  await Promise.all([SecureStore.deleteItemAsync(TOKEN_KEY), SecureStore.deleteItemAsync(CUSTOMER_KEY)]).catch(
+  await Promise.all([deviceStorage.remove(TOKEN_KEY), deviceStorage.remove(CUSTOMER_KEY)]).catch(
     () => {}
   );
 }
@@ -56,8 +56,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     (async () => {
       try {
         const [token, raw] = await Promise.all([
-          SecureStore.getItemAsync(TOKEN_KEY),
-          SecureStore.getItemAsync(CUSTOMER_KEY),
+          deviceStorage.get(TOKEN_KEY),
+          deviceStorage.get(CUSTOMER_KEY),
         ]);
         if (token) {
           setApiToken(token);
@@ -73,8 +73,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signIn = useCallback(async (token: string, next: Customer) => {
-    await SecureStore.setItemAsync(TOKEN_KEY, token);
-    await SecureStore.setItemAsync(CUSTOMER_KEY, JSON.stringify(next));
+    await deviceStorage.set(TOKEN_KEY, token);
+    await deviceStorage.set(CUSTOMER_KEY, JSON.stringify(next));
     setApiToken(token);
     setCustomer(next);
     setExpired(false);
