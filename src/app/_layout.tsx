@@ -81,10 +81,19 @@ function RootNavigator() {
   // Splash native tetap tampil sampai sesi & flag onboarding terbaca; AnimatedSplash yang menyembunyikannya.
   if (status === 'loading' || !onboarding.ready) return null;
 
+  const signedIn = status === 'signed-in';
+
+  // App khusus customer yang sudah login. Belum login / sesi habis (401) → /login.
+  // Onboarding "Mulai" cukup menutup overlay: user yang belum login sudah berada di /login.
   return (
     <>
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}>
-        <Stack.Screen name="(tabs)" />
+        <Stack.Protected guard={signedIn} redirectTo="/login">
+          <Stack.Screen name="(tabs)" />
+        </Stack.Protected>
+        <Stack.Protected guard={!signedIn} redirectTo="/">
+          <Stack.Screen name="login" />
+        </Stack.Protected>
       </Stack>
       {splashDone && onboarding.visible ? <Onboarding onSkip={onboarding.finish} onStart={onboarding.finish} /> : null}
       {!splashDone ? <AnimatedSplash onDone={finishSplash} /> : null}
