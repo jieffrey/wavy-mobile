@@ -69,21 +69,22 @@ const dark = {
 const radius = { sm: 4, md: 6, lg: 8, xl: 12 };
 
 /**
- * Nama font hasil useFonts (@expo-google-fonts). Di React Native tiap ketebalan = family sendiri,
+ * Nama font hasil useFonts (@expo-google-fonts/poppins). Di React Native tiap ketebalan = family sendiri,
  * jadi pakai kelas font-* di bawah, bukan font-bold.
- * Space Grotesk = display/heading, Inter = body/form, IBM Plex Mono = harga/kode/tanggal/label.
+ * Sama dengan web (wavy-next/src/app/globals.css): display, sans, dan mono semuanya Poppins.
+ * Nama kelas tetap (display/sans/mono) supaya peran teks jelas; hanya family-nya yang mengikuti web.
  */
 const fonts = {
-  display: 'SpaceGrotesk_700Bold',
-  'display-medium': 'SpaceGrotesk_500Medium',
-  'display-semibold': 'SpaceGrotesk_600SemiBold',
-  sans: 'Inter_400Regular',
-  'sans-medium': 'Inter_500Medium',
-  'sans-semibold': 'Inter_600SemiBold',
-  'sans-bold': 'Inter_700Bold',
-  mono: 'IBMPlexMono_400Regular',
-  'mono-medium': 'IBMPlexMono_500Medium',
-  'mono-semibold': 'IBMPlexMono_600SemiBold',
+  display: 'Poppins_700Bold',
+  'display-medium': 'Poppins_500Medium',
+  'display-semibold': 'Poppins_600SemiBold',
+  sans: 'Poppins_400Regular',
+  'sans-medium': 'Poppins_500Medium',
+  'sans-semibold': 'Poppins_600SemiBold',
+  'sans-bold': 'Poppins_700Bold',
+  mono: 'Poppins_400Regular',
+  'mono-medium': 'Poppins_500Medium',
+  'mono-semibold': 'Poppins_600SemiBold',
 };
 
 /** Lapisan transparan di atas gambar (overlay poster, scrim). */
