@@ -1,7 +1,8 @@
-import * as SecureStore from 'expo-secure-store';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
-// "Sudah lihat onboarding?" Satu flag di secure-store (pola sama dengan app SWMS).
+import { flagStorage } from '@/lib/flag-storage';
+
+// "Sudah lihat onboarding?" Satu flag di secure-store, localStorage di web (pola sama dengan app SWMS).
 // Onboarding tampil saat app pertama kali dibuka, dan lagi setiap replay() (Profil → Lihat pengenalan).
 const SEEN_KEY = 'wavy.onboarding.seen';
 
@@ -26,7 +27,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    SecureStore.getItemAsync(SEEN_KEY)
+    flagStorage.get(SEEN_KEY)
       .then((seen) => setVisible(seen !== '1'))
       .catch(() => setVisible(false)) // storage tidak terbaca: jangan blokir app
       .finally(() => setReady(true));
@@ -34,7 +35,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
 
   const finish = useCallback(() => {
     setVisible(false);
-    SecureStore.setItemAsync(SEEN_KEY, '1').catch(() => {});
+    flagStorage.set(SEEN_KEY, '1').catch(() => {});
   }, []);
 
   const replay = useCallback(() => setVisible(true), []);

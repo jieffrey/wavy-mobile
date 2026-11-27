@@ -32,6 +32,9 @@ const light = {
   info: '#2563EB',
   'info-foreground': '#FFFFFF',
   'info-subtle': '#EFF6FF',
+  // warna dasar gambar latar login web (wavy-next/public/images/login-otp.png, disampel di tengah gambar).
+  // Dipakai splash native & latar sebelum gambar termuat, supaya tidak ada kedipan warna lain.
+  backdrop: '#FB589C',
 };
 
 /** Tema gelap (= .dark web). Disalin untuk nanti; belum dipakai layar mana pun. */
