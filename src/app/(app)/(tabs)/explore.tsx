@@ -122,7 +122,9 @@ export default function ExploreScreen() {
           keyboardShouldPersistTaps="handled"
           contentContainerClassName="gap-5 px-4 pb-10 pt-4 grow"
           ListHeaderComponent={
-            data.length > 0 ? <Text variant="label">{t('Explore.resultCount', { count: data.length })}</Text> : undefined
+            data.length > 0 ? (
+              <Text variant="label">{t('Explore.resultCount', { count: data.length })}</Text>
+            ) : undefined
           }
           ListEmptyComponent={
             filtered ? (
