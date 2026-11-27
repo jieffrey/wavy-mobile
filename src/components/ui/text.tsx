@@ -5,11 +5,11 @@ import { cn } from '@/lib/cn';
 type Variant = 'body' | 'display' | 'mono' | 'label';
 
 const VARIANTS: Record<Variant, string> = {
-  // Inter: body, form
+  // Poppins (sama dengan web): body, form
   body: 'font-sans text-sm text-foreground',
-  // Space Grotesk: judul & angka besar, tracking sedikit rapat (DESIGN §3)
+  // judul & angka besar, tracking sedikit rapat (DESIGN §3)
   display: 'font-display text-xl tracking-tight text-foreground',
-  // IBM Plex Mono: harga, kode, tanggal
+  // harga, kode, tanggal (web juga memakai Poppins untuk peran mono)
   mono: 'font-mono text-sm text-foreground',
   // label kecil uppercase, tracking lebar
   label: 'font-mono-medium text-xs uppercase tracking-widest text-muted-foreground',
