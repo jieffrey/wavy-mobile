@@ -52,6 +52,26 @@ export const en: DeepPartial<Messages> = {
     signIn: 'Sign in',
     sessionExpired: 'Your session has ended. Please sign in again.',
   },
+  Sales: {
+    badge: { open: 'Available', sold_out: 'Sold out', upcoming: 'Not open yet', closed: 'Closed' },
+    buy: 'Buy tickets',
+  },
+  Common: {
+    back: 'Back',
+    seeAll: 'See all',
+    startingFrom: 'From',
+    priceUnavailable: 'Price not available',
+    byOrganizer: 'by {organizer}',
+    remaining: '{count} left',
+  },
+  Home: {
+    greeting: 'Hi, {name}',
+    greetingFallback: 'Hi!',
+    subtitle: 'What do you want to watch today?',
+    searchPlaceholder: 'Search concerts, artists...',
+    featuredTitle: 'Featured concerts',
+    allTitle: 'Latest concerts',
+  },
   Tabs: { home: 'Home', explore: 'Explore', tickets: 'Tickets', orders: 'Orders', profile: 'Profile' },
   States: { loading: 'Loading...', errorTitle: 'Failed to load data', retry: 'Try again', login: 'Sign in' },
 };
