@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
-import { flagStorage } from '@/lib/flag-storage';
+import { deviceStorage } from '@/lib/device-storage';
 
 // "Sudah lihat onboarding?" Satu flag di secure-store, localStorage di web (pola sama dengan app SWMS).
 // Onboarding tampil saat app pertama kali dibuka, dan lagi setiap replay() (Profil → Lihat pengenalan).
@@ -27,7 +27,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    flagStorage.get(SEEN_KEY)
+    deviceStorage.get(SEEN_KEY)
       .then((seen) => setVisible(seen !== '1'))
       .catch(() => setVisible(false)) // storage tidak terbaca: jangan blokir app
       .finally(() => setReady(true));
@@ -35,7 +35,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
 
   const finish = useCallback(() => {
     setVisible(false);
-    flagStorage.set(SEEN_KEY, '1').catch(() => {});
+    deviceStorage.set(SEEN_KEY, '1').catch(() => {});
   }, []);
 
   const replay = useCallback(() => setVisible(true), []);
