@@ -67,7 +67,9 @@ export function ErrorState({
         {t('States.errorTitle')}
       </Text>
       <Text className="text-center text-muted-foreground">{message ?? errorMessage(error)}</Text>
-      {onRetry ? <Button label={t('States.retry')} variant="outline" onPress={onRetry} className="mt-2 self-stretch" /> : null}
+      {onRetry ? (
+        <Button label={t('States.retry')} variant="outline" onPress={onRetry} className="mt-2 self-stretch" />
+      ) : null}
     </View>
   );
 }
@@ -76,7 +78,10 @@ export function ErrorState({
 export function InlineError({ message, className }: { message: string; className?: string }) {
   return (
     <View
-      className={cn('flex-row items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/10 p-3', className)}
+      className={cn(
+        'flex-row items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/10 p-3',
+        className
+      )}
       accessibilityRole="alert">
       <CircleAlert color={colors.destructive} size={18} />
       <Text className="flex-1 text-destructive">{message}</Text>

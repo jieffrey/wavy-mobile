@@ -19,7 +19,15 @@ const initials = (title: string) =>
     .toUpperCase();
 
 /** Poster pengganti (DESIGN §2.5): gradient stage → primary-glow + judul. Ukuran sm = inisial. */
-export function PosterFallback({ title, size = 'md', className }: { title: string; size?: PosterSize; className?: string }) {
+export function PosterFallback({
+  title,
+  size = 'md',
+  className,
+}: {
+  title: string;
+  size?: PosterSize;
+  className?: string;
+}) {
   return (
     <LinearGradient
       colors={[colors.stage, colors['primary-glow']]}

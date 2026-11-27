@@ -136,7 +136,13 @@ export function EnterComposition({ active }: { active: boolean }) {
           </View>
         </View>
       </Piece>
-      <Piece active={active} motion="drop" delay={760} drift rotate={-10} style={{ position: 'absolute', right: 0, bottom: 10 }}>
+      <Piece
+        active={active}
+        motion="drop"
+        delay={760}
+        drift
+        rotate={-10}
+        style={{ position: 'absolute', right: 0, bottom: 10 }}>
         <View className="flex-row items-center gap-2 rounded-full bg-success px-5 py-3">
           <BadgeCheck color={colors['primary-foreground']} size={22} />
           <Text variant="display" className="text-xl text-primary-foreground">

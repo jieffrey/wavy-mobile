@@ -31,7 +31,16 @@ interface PieceProps {
   children?: ReactNode;
 }
 
-export function Piece({ active, motion = 'pop', delay = 0, drift = false, rotate = 0, style, className, children }: PieceProps) {
+export function Piece({
+  active,
+  motion = 'pop',
+  delay = 0,
+  drift = false,
+  rotate = 0,
+  style,
+  className,
+  children,
+}: PieceProps) {
   const reduceMotion = useReducedMotion();
   const progress = useSharedValue(reduceMotion ? 1 : 0);
   const float = useSharedValue(0);
