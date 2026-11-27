@@ -232,7 +232,9 @@ export function AuthScreen({ mode }: { mode: AuthMode }) {
                   size="lg"
                 />
                 <View className="flex-row flex-wrap items-center justify-center gap-1">
-                  <Text className="text-muted-foreground">{isRegister ? t('Auth.haveAccount') : t('Auth.noAccount')}</Text>
+                  <Text className="text-muted-foreground">
+                    {isRegister ? t('Auth.haveAccount') : t('Auth.noAccount')}
+                  </Text>
                   <Pressable accessibilityRole="link" onPress={switchMode} disabled={loading} hitSlop={8}>
                     <Text className="font-sans-semibold text-primary">
                       {isRegister ? t('Auth.toLogin') : t('Auth.toRegister')}

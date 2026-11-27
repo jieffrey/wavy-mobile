@@ -8,11 +8,7 @@ import { t, type MessageKey } from '@/i18n';
 
 const msg = (key: MessageKey) => ({ message: key });
 
-const email = z
-  .string()
-  .trim()
-  .min(1, msg('Validation.emailRequired'))
-  .email(msg('Validation.emailInvalid'));
+const email = z.string().trim().min(1, msg('Validation.emailRequired')).email(msg('Validation.emailInvalid'));
 
 export const loginSchema = z.object({ email });
 
@@ -43,33 +39,29 @@ function isValidDob(day: string, month: string, year: string): boolean {
   return date.getFullYear() === y && date.getMonth() === m - 1 && date.getDate() === d && date <= new Date();
 }
 
-export const buyerSchema = z
-  .object({
-    firstName: z.string().trim().min(1, msg('Checkout.errors.firstName')),
-    lastName: z.string().trim(),
-    email: z
-      .string()
-      .trim()
-      .min(1, msg('Checkout.errors.emailRequired'))
-      .email(msg('Checkout.errors.emailInvalid')),
-    phone: z
-      .string()
-      .transform((v) => v.replace(/\D/g, ''))
-      .pipe(z.string().min(1, msg('Checkout.errors.phoneRequired')).min(9, msg('Checkout.errors.phoneShort'))),
-    idNumber: z.string().trim().min(1, msg('Checkout.errors.idNumber')),
-    dobDay: z.string(),
-    dobMonth: z.string(),
-    dobYear: z.string(),
-    gender: z.enum(['L', 'P'], { errorMap: () => msg('Checkout.errors.gender') }),
-    agreeTerms: z.literal(true, { errorMap: () => msg('Checkout.errors.agreeTerms') }),
-    agreeData: z.literal(true, { errorMap: () => msg('Checkout.errors.agreeData') }),
-  })
-  .superRefine((v, ctx) => {
-    if (!v.dobDay || !v.dobMonth || !v.dobYear)
-      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['dob'], message: 'Checkout.errors.dobRequired' });
-    else if (!isValidDob(v.dobDay, v.dobMonth, v.dobYear))
-      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['dob'], message: 'Checkout.errors.dobInvalid' });
-  });
+// Tanggal lahir divalidasi sebagai satu field `dob` (bukan refine di level objek) supaya pesannya
+// tampil bersamaan dengan error field lain — refine objek di zod hanya jalan kalau semua field lolos.
+const dob = z.object({ day: z.string(), month: z.string(), year: z.string() }).superRefine((v, ctx) => {
+  if (!v.day || !v.month || !v.year)
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Checkout.errors.dobRequired' });
+  else if (!isValidDob(v.day, v.month, v.year))
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Checkout.errors.dobInvalid' });
+});
+
+export const buyerSchema = z.object({
+  firstName: z.string().trim().min(1, msg('Checkout.errors.firstName')),
+  lastName: z.string().trim(),
+  email: z.string().trim().min(1, msg('Checkout.errors.emailRequired')).email(msg('Checkout.errors.emailInvalid')),
+  phone: z
+    .string()
+    .transform((v) => v.replace(/\D/g, ''))
+    .pipe(z.string().min(1, msg('Checkout.errors.phoneRequired')).min(9, msg('Checkout.errors.phoneShort'))),
+  idNumber: z.string().trim().min(1, msg('Checkout.errors.idNumber')),
+  dob,
+  gender: z.enum(['L', 'P'], { errorMap: () => msg('Checkout.errors.gender') }),
+  agreeTerms: z.literal(true, { errorMap: () => msg('Checkout.errors.agreeTerms') }),
+  agreeData: z.literal(true, { errorMap: () => msg('Checkout.errors.agreeData') }),
+});
 
 export type FieldErrors<K extends string = string> = Partial<Record<K, string>>;
 
