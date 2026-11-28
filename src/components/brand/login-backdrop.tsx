@@ -3,7 +3,7 @@ import { StyleSheet, View, type ViewStyle } from 'react-native';
 
 import { colors } from '@/theme/tokens';
 
-// Gambar yang sama persis dengan panel login web (wavy-next: auth/login & organizer/login memakai
+// Gambar yang sama persis dengan panel login web (wavy-next: auth/login & admin/login memakai
 // /images/login-otp.png dengan background-size: cover, background-position: center).
 // contentFit "cover" + contentPosition "center" = perilaku CSS yang sama.
 const SOURCE = require('../../../assets/images/login-backdrop.png');

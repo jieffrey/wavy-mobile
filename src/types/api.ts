@@ -6,6 +6,12 @@ export interface Customer {
   email: string;
 }
 
+/** GET/PATCH /me */
+export interface CustomerProfile extends Customer {
+  phone: string;
+  needs_name: boolean;
+}
+
 export type SalesStatus = 'upcoming' | 'open' | 'closed' | 'sold_out';
 
 export interface Concert {
@@ -18,7 +24,6 @@ export interface Concert {
   banner_url?: string | null;
   status: string;
   artist_name: string;
-  organizer_name: string;
   min_price: string | number | null;
   remaining: number;
   sales_status?: SalesStatus;
@@ -39,7 +44,6 @@ export interface TicketCategory {
 }
 
 export interface ConcertDetail extends Concert {
-  organizer_id: number;
   artist_id: number;
   description: string | null;
   genre: string | null;

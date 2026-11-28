@@ -154,11 +154,6 @@ export default function ConcertDetailScreen() {
                 value={c.artist_name}
               />
             ) : null}
-            {c.organizer_name ? (
-              <Text className="text-xs text-muted-foreground">
-                {t('ConcertDetail.organizedBy')} <Text className="font-sans-semibold text-xs">{c.organizer_name}</Text>
-              </Text>
-            ) : null}
           </View>
 
           <View className="gap-3">

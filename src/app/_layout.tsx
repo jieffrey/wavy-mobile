@@ -78,7 +78,6 @@ function RootNavigator() {
         </Stack.Protected>
         <Stack.Protected guard={!signedIn} redirectTo="/">
           <Stack.Screen name="login" />
-          <Stack.Screen name="register" />
         </Stack.Protected>
       </Stack>
       {splashDone && onboarding.visible ? <Onboarding onSkip={onboarding.finish} onStart={onboarding.finish} /> : null}

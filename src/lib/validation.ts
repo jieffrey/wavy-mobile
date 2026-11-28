@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { t, type MessageKey } from '@/i18n';
 
-// Validasi form (login, daftar, data pemesan, transfer tiket) dengan zod.
+// Validasi form (login, isi nama, data pemesan, transfer tiket) dengan zod.
 // Pesan di skema = kunci i18n; `fieldErrors` menerjemahkannya dan mengembalikan satu pesan per field.
 // Aturan disamakan dengan backend (auth.schema / POST /orders) supaya error tidak baru muncul setelah request.
 
@@ -12,14 +12,14 @@ const email = z.string().trim().min(1, msg('Validation.emailRequired')).email(ms
 
 export const loginSchema = z.object({ email });
 
-export const registerSchema = z.object({
+// nama customer (langkah isi nama setelah OTP & ubah nama di profil); sama dengan profileSchema backend
+export const nameSchema = z.object({
   name: z
     .string()
     .trim()
     .min(1, msg('Validation.nameRequired'))
     .min(2, msg('Validation.nameShort'))
     .max(80, msg('Validation.nameLong')),
-  email,
 });
 
 export const otpSchema = z.object({

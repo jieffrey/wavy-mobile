@@ -1,9 +1,10 @@
 import { router } from 'expo-router';
 import { Bell, ChevronRight, LogOut, Sparkles } from 'lucide-react-native';
-import type { ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { Alert, Pressable, RefreshControl, ScrollView, View } from 'react-native';
 
 import { LevelRing } from '@/components/profile/level-ring';
+import { ProfileName } from '@/components/profile/profile-name';
 import { PageHeader, Screen } from '@/components/ui/screen';
 import { ErrorState, LoadingState } from '@/components/ui/states';
 import { Text } from '@/components/ui/text';
@@ -15,7 +16,7 @@ import { cn } from '@/lib/cn';
 import { useOnboarding } from '@/store/onboarding';
 import { useSession } from '@/store/session';
 import { colors } from '@/theme/tokens';
-import type { CustomerLevel, Order } from '@/types/api';
+import type { CustomerLevel, CustomerProfile, Order } from '@/types/api';
 
 // Minimal konser (order paid, event berbeda) untuk level 1..5. Sama dengan web & customerService.level backend.
 const LEVEL_THRESHOLDS = [0, 1, 3, 5, 10];
@@ -131,13 +132,23 @@ function LevelSection({ data, orders }: { data: CustomerLevel; orders: number | 
 }
 
 export default function ProfileScreen() {
-  const { customer, signOut } = useSession();
+  const { customer, signOut, updateCustomer } = useSession();
   const { replay } = useOnboarding();
   const level = useApiResource('me-level', () => apiGet<CustomerLevel>('/me/level'));
   const orders = useApiResource('orders-history-count', () => apiGet<Order[]>('/orders/history'));
   const notifications = useNotifications('notifications-profile');
+  // GET /me = sumber utama nama/email; salinan di sesi disamakan bila berbeda (mis. diubah dari web)
+  const me = useApiResource('me-profile', () => apiGet<CustomerProfile>('/me'));
+  // Hanya sekali per hasil fetch: setelah nama diubah di layar ini, data /me lama tidak boleh menimpanya.
+  const fresh = me.data;
+  const synced = useRef<CustomerProfile | null>(null);
+  useEffect(() => {
+    if (!fresh || !customer || synced.current === fresh) return;
+    synced.current = fresh;
+    if (fresh.name !== customer.name || fresh.email !== customer.email)
+      updateCustomer({ id: fresh.id, name: fresh.name, email: fresh.email });
+  }, [fresh, customer, updateCustomer]);
 
-  const name = customer?.name?.trim() || t('Profile.defaultName');
   const initial = (customer?.name?.trim() || customer?.email || 'W').charAt(0).toUpperCase();
 
   function confirmLogout() {
@@ -158,6 +169,7 @@ export default function ProfileScreen() {
             onRefresh={() => {
               level.refresh();
               orders.refresh();
+              me.refresh();
               notifications.refresh();
             }}
             tintColor={colors.primary}
@@ -170,14 +182,7 @@ export default function ProfileScreen() {
               {initial}
             </Text>
           </View>
-          <View className="flex-1">
-            <Text variant="display" className="text-lg" numberOfLines={1}>
-              {name}
-            </Text>
-            <Text className="text-muted-foreground" numberOfLines={1}>
-              {customer?.email ?? ''}
-            </Text>
-          </View>
+          <ProfileName name={customer?.name ?? null} email={customer?.email ?? ''} />
         </View>
 
         {level.loading ? (
