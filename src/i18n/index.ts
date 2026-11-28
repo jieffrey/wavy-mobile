@@ -29,7 +29,10 @@ function lookup(dict: unknown, key: string): string | undefined {
   return typeof node === 'string' ? node : undefined;
 }
 
-/** Ambil teks UI. `{nama}` di teks diganti dengan vars.nama. Locale lain jatuh ke bahasa Indonesia. */
+export const LOCALES: readonly Locale[] = ['id', 'en'];
+export const isLocale = (v: unknown): v is Locale => v === 'id' || v === 'en';
+
+/** Ambil teks UI. `{nama}` di teks diganti dengan vars.nama. Kunci yang tidak ada jatuh ke bahasa Indonesia. */
 export function t(key: MessageKey, vars?: Record<string, string | number>): string {
   const raw = lookup(dictionaries[locale], key) ?? lookup(id, key) ?? key;
   if (!vars) return raw;

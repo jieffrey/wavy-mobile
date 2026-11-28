@@ -4,13 +4,14 @@ import { useEffect, useRef, type ReactNode } from 'react';
 import { Alert, Pressable, RefreshControl, ScrollView, View } from 'react-native';
 
 import { LevelRing } from '@/components/profile/level-ring';
+import { LocalePicker } from '@/components/profile/locale-picker';
 import { ProfileName } from '@/components/profile/profile-name';
 import { PageHeader, Screen } from '@/components/ui/screen';
 import { ErrorState, LoadingState } from '@/components/ui/states';
 import { Text } from '@/components/ui/text';
 import { useApiResource } from '@/hooks/use-api-resource';
 import { useNotifications } from '@/hooks/use-notifications';
-import { t } from '@/i18n';
+import { t, tMaybe } from '@/i18n';
 import { apiGet } from '@/lib/api';
 import { cn } from '@/lib/cn';
 import { useOnboarding } from '@/store/onboarding';
@@ -20,6 +21,10 @@ import type { CustomerLevel, CustomerProfile, Order } from '@/types/api';
 
 // Minimal konser (order paid, event berbeda) untuk level 1..5. Sama dengan web & customerService.level backend.
 const LEVEL_THRESHOLDS = [0, 1, 3, 5, 10];
+
+// nama level diterjemahkan di klien; level_label backend hanya cadangan untuk level di luar 1..5
+const levelLabel = (data: CustomerLevel) =>
+  tMaybe(`Profile.level.labels.l${data.level}`) ?? data.level_label;
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
@@ -78,7 +83,7 @@ function LevelSection({ data, orders }: { data: CustomerLevel; orders: number | 
       <View className="items-center gap-2">
         <LevelRing level={data.level} progress={progress} />
         <Text className="font-sans-semibold text-primary">
-          {t('Profile.level.current', { level: data.level, label: data.level_label })}
+          {t('Profile.level.current', { level: data.level, label: levelLabel(data) })}
         </Text>
         <Text variant="mono" className="text-xs text-muted-foreground">
           {atMax
@@ -92,7 +97,7 @@ function LevelSection({ data, orders }: { data: CustomerLevel; orders: number | 
 
       {/* Statistik mengelilingi ring */}
       <View className="flex-row flex-wrap border-t border-border pt-2">
-        <Stat label={t('Profile.level.statLevel')} value={data.level_label} />
+        <Stat label={t('Profile.level.statLevel')} value={levelLabel(data)} />
         <Stat label={t('Profile.level.statAttended')} value={String(data.attended_concerts)} />
         <Stat
           label={t('Profile.level.statNext')}
@@ -208,6 +213,8 @@ export default function ProfileScreen() {
             }
             onPress={() => router.push('/notifications')}
           />
+          <View className="h-px bg-border" />
+          <LocalePicker />
           <View className="h-px bg-border" />
           <MenuRow
             icon={<Sparkles color={colors.foreground} size={20} />}
