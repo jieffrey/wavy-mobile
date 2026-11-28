@@ -13,7 +13,7 @@ import { Text } from '@/components/ui/text';
 import { useApiResource } from '@/hooks/use-api-resource';
 import { useCountdown } from '@/hooks/use-countdown';
 import { t } from '@/i18n';
-import { apiGet, ApiError } from '@/lib/api';
+import { apiGet, apiPost, ApiError } from '@/lib/api';
 import { errorMessage } from '@/lib/error-message';
 import { formatCountdown, formatDateTime, formatIDR } from '@/lib/format';
 import { createPayment, syncPaymentStatus } from '@/lib/payment';
@@ -45,6 +45,9 @@ export default function OrderDetailScreen() {
   const [paying, setPaying] = useState(false);
   const [checking, setChecking] = useState(false);
   const [payError, setPayError] = useState<unknown>(null);
+  const [confirmCancel, setConfirmCancel] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
+  const [cancelError, setCancelError] = useState<unknown>(null);
   const backFromPayment = useRef(false);
 
   const { refresh } = order;
@@ -93,6 +96,22 @@ export default function OrderDetailScreen() {
       if (err instanceof ApiError && err.status === 409) refresh();
     } finally {
       setPaying(false);
+    }
+  }
+
+  // POST /orders/:id/cancel: status -> cancelled, kuota langsung lepas. Gagal = pesan error, order dimuat ulang.
+  async function cancelOrder() {
+    if (!id) return;
+    setCancelling(true);
+    setCancelError(null);
+    try {
+      await apiPost(`/orders/${id}/cancel`);
+      setConfirmCancel(false);
+    } catch (err) {
+      setCancelError(err);
+    } finally {
+      await refresh();
+      setCancelling(false);
     }
   }
 
@@ -160,6 +179,21 @@ export default function OrderDetailScreen() {
               {t('OrderDetail.expiredTitle')}
             </Text>
             <Text className="text-muted-foreground">{t('OrderDetail.expiredBody')}</Text>
+            <Button
+              label={t('OrderDetail.orderAgain')}
+              variant="outline"
+              onPress={() => router.push({ pathname: '/concerts/[id]', params: { id: String(o.event_id) } })}
+              className="mt-1"
+            />
+          </View>
+        ) : null}
+
+        {o.status === 'cancelled' ? (
+          <View className="gap-2 rounded-xl bg-muted p-4" accessibilityLiveRegion="polite">
+            <Text variant="display" className="text-base">
+              {t('OrderDetail.cancelledTitle')}
+            </Text>
+            <Text className="text-muted-foreground">{t('OrderDetail.cancelledBody')}</Text>
             <Button
               label={t('OrderDetail.orderAgain')}
               variant="outline"
@@ -243,14 +277,50 @@ export default function OrderDetailScreen() {
           </Text>
         ) : null}
         {payError ? <InlineError message={errorMessage(payError)} /> : null}
+
+        {pending && !expiredLocally ? (
+          confirmCancel ? (
+            <View className="gap-3 rounded-xl border border-destructive/30 bg-destructive/5 p-4" accessibilityRole="alert">
+              <Text className="font-sans-semibold">{t('OrderDetail.cancel.confirmTitle')}</Text>
+              <Text className="text-xs text-muted-foreground">{t('OrderDetail.cancel.confirmBody')}</Text>
+              {cancelError ? <InlineError message={errorMessage(cancelError)} /> : null}
+              <Button
+                label={cancelling ? t('OrderDetail.cancel.cancelling') : t('OrderDetail.cancel.confirm')}
+                variant="destructive"
+                loading={cancelling}
+                onPress={cancelOrder}
+              />
+              <Button
+                label={t('OrderDetail.cancel.keep')}
+                variant="outline"
+                disabled={cancelling}
+                onPress={() => setConfirmCancel(false)}
+              />
+            </View>
+          ) : (
+            <View className="gap-2">
+              <Button
+                label={t('OrderDetail.cancel.cta')}
+                variant="destructive"
+                disabled={paying || checking}
+                onPress={() => {
+                  setCancelError(null);
+                  setConfirmCancel(true);
+                }}
+              />
+              {cancelError ? <InlineError message={errorMessage(cancelError)} /> : null}
+            </View>
+          )
+        ) : null}
       </ScrollView>
 
-      {pending && !expiredLocally ? (
+      {/* disembunyikan selama konfirmasi batal supaya panel konfirmasi tidak tertutup */}
+      {pending && !expiredLocally && !confirmCancel ? (
         <SafeAreaView edges={['bottom']} className="gap-2 border-t border-border bg-background px-4 pb-3 pt-3">
           <Button
             label={paying ? t('OrderDetail.pay.processing') : t('OrderDetail.pay.cta')}
             loading={paying}
-            disabled={checking}
+            disabled={checking || cancelling}
             onPress={pay}
             size="lg"
           />

@@ -158,8 +158,18 @@ export const id = {
     paymentOnline:
       'Bayar lewat Midtrans (mode sandbox untuk proyek UKK): transfer bank/VA, QRIS, atau e-wallet. Status pesanan diperbarui setelah pembayaran berhasil.',
     paymentManual:
-      'Pembayaran online belum aktif. Pembayaran diverifikasi manual oleh penyelenggara, lalu tiket terbit otomatis.',
-    rejectedBody: 'Pembayaran pesanan ini ditolak oleh penyelenggara.',
+      'Pembayaran online belum aktif. Pembayaran diverifikasi manual oleh tim Wavy, lalu tiket terbit otomatis.',
+    cancelledTitle: 'Pesanan dibatalkan',
+    cancelledBody: 'Kamu membatalkan pesanan ini, jadi tiketnya dilepas kembali ke kuota. Silakan pesan ulang jika masih tersedia.',
+    cancel: {
+      cta: 'Batalkan pesanan',
+      confirmTitle: 'Batalkan pesanan ini?',
+      confirmBody: 'Tiket dilepas kembali ke kuota dan pesanan tidak bisa dibayar lagi. Tindakan ini tidak bisa diurungkan.',
+      confirm: 'Ya, batalkan',
+      keep: 'Tidak, simpan pesanan',
+      cancelling: 'Membatalkan...',
+    },
+    rejectedBody: 'Pembayaran pesanan ini ditolak oleh tim Wavy.',
     refundedBody: 'Pesanan ini sudah di-refund. Tiketnya tidak berlaku lagi.',
     pay: {
       cta: 'Bayar sekarang',
@@ -304,7 +314,7 @@ export const id = {
       INVALID_QUANTITY: 'Jumlah tiket tidak valid. Pilih 1 sampai 4 tiket.',
       VALIDATION_ERROR: 'Data yang dikirim tidak valid. Periksa lagi isian kamu.',
       ORDER_NOT_PENDING: 'Pesanan ini sudah tidak menunggu pembayaran.',
-      PAYMENT_NOT_CONFIGURED: 'Pembayaran online belum aktif. Tunggu verifikasi dari penyelenggara.',
+      PAYMENT_NOT_CONFIGURED: 'Pembayaran online belum aktif. Tunggu verifikasi dari tim Wavy.',
       PAYMENT_GATEWAY_ERROR: 'Layanan pembayaran sedang bermasalah. Coba lagi sebentar lagi.',
     },
   },
@@ -374,6 +384,7 @@ export const id = {
     expired: 'Kedaluwarsa',
     rejected: 'Ditolak',
     refunded: 'Refund',
+    cancelled: 'Dibatalkan',
   },
 };
 

@@ -22,13 +22,14 @@ export function SalesBadge({ status, className }: { status: SalesStatus; classNa
   );
 }
 
-// DESIGN §6: pending amber, paid hijau, expired abu, ditolak/refund merah. Mono uppercase, pill.
+// DESIGN §6: pending amber, paid hijau, expired/dibatalkan abu, ditolak/refund merah. Mono uppercase, pill.
 const ORDER_TONE: Record<OrderStatus, { box: string; text: string }> = {
   pending_payment: { box: 'bg-warning/10', text: 'text-warning' },
   paid: { box: 'bg-success/10', text: 'text-success' },
   expired: { box: 'bg-muted', text: 'text-muted-foreground' },
   rejected: { box: 'bg-destructive/10', text: 'text-destructive' },
   refunded: { box: 'bg-destructive/10', text: 'text-destructive' },
+  cancelled: { box: 'bg-muted', text: 'text-muted-foreground' },
 };
 
 export function OrderStatusBadge({ status, className }: { status: OrderStatus | string; className?: string }) {

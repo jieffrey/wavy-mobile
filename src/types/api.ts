@@ -59,7 +59,7 @@ export interface ConcertDetail extends Concert {
   review_count: number;
 }
 
-export type OrderStatus = 'pending_payment' | 'paid' | 'rejected' | 'refunded' | 'expired';
+export type OrderStatus = 'pending_payment' | 'paid' | 'rejected' | 'refunded' | 'expired' | 'cancelled';
 
 export interface Order {
   id: number;
