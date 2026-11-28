@@ -247,6 +247,7 @@ export const id = {
     saving: 'Menyimpan...',
     cancel: 'Batal',
     nameSaved: 'Nama diperbarui.',
+    language: 'Bahasa',
     level: {
       title: 'Wavy Fan Level',
       subtitle: 'Naik level dengan menonton lebih banyak konser lewat Wavy.',
@@ -263,6 +264,7 @@ export const id = {
       tiersLabel: 'Tingkatan level',
       tierShort: 'Lv {level}',
       tierMin: '{count}+',
+      labels: { l1: 'Pengunjung', l2: 'Newbie', l3: 'Fan', l4: 'Super Fan', l5: 'Legend' },
     },
     menu: {
       notifications: 'Notifikasi',
@@ -276,6 +278,11 @@ export const id = {
       cancel: 'Batal',
       confirm: 'Keluar',
     },
+  },
+  Locale: {
+    label: 'Bahasa',
+    short: { id: 'ID', en: 'EN' },
+    name: { id: 'Bahasa Indonesia', en: 'English' },
   },
   Notifications: {
     title: 'Notifikasi',
