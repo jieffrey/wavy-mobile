@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { Bell, ChevronRight, LogOut, Sparkles } from 'lucide-react-native';
-import { useEffect, type ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { Alert, Pressable, RefreshControl, ScrollView, View } from 'react-native';
 
 import { LevelRing } from '@/components/profile/level-ring';
@@ -139,9 +139,13 @@ export default function ProfileScreen() {
   const notifications = useNotifications('notifications-profile');
   // GET /me = sumber utama nama/email; salinan di sesi disamakan bila berbeda (mis. diubah dari web)
   const me = useApiResource('me-profile', () => apiGet<CustomerProfile>('/me'));
+  // Hanya sekali per hasil fetch: setelah nama diubah di layar ini, data /me lama tidak boleh menimpanya.
   const fresh = me.data;
+  const synced = useRef<CustomerProfile | null>(null);
   useEffect(() => {
-    if (fresh && customer && (fresh.name !== customer.name || fresh.email !== customer.email))
+    if (!fresh || !customer || synced.current === fresh) return;
+    synced.current = fresh;
+    if (fresh.name !== customer.name || fresh.email !== customer.email)
       updateCustomer({ id: fresh.id, name: fresh.name, email: fresh.email });
   }, [fresh, customer, updateCustomer]);
 
