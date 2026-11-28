@@ -314,7 +314,8 @@ export default function OrderDetailScreen() {
         ) : null}
       </ScrollView>
 
-      {pending && !expiredLocally ? (
+      {/* disembunyikan selama konfirmasi batal supaya panel konfirmasi tidak tertutup */}
+      {pending && !expiredLocally && !confirmCancel ? (
         <SafeAreaView edges={['bottom']} className="gap-2 border-t border-border bg-background px-4 pb-3 pt-3">
           <Button
             label={paying ? t('OrderDetail.pay.processing') : t('OrderDetail.pay.cta')}
