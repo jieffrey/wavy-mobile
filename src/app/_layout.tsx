@@ -80,8 +80,6 @@ function RootNavigator() {
           <Stack.Screen name="login" />
           <Stack.Screen name="register" />
         </Stack.Protected>
-        {/* SPIKE MO-0: bisa dibuka sebelum maupun sesudah login */}
-        <Stack.Screen name="spike-venue" />
       </Stack>
       {splashDone && onboarding.visible ? <Onboarding onSkip={onboarding.finish} onStart={onboarding.finish} /> : null}
       {!splashDone ? <AnimatedSplash onDone={finishSplash} /> : null}
