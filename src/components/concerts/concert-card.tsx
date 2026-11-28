@@ -17,7 +17,7 @@ function price(c: Concert) {
 
 /**
  * Kartu konser seperti web di bawah 640px: poster kecil kiri (4:5), info kanan.
- * Tanggal mono uppercase + badge status, judul Space Grotesk, lokasi, organizer, harga mono.
+ * Tanggal mono uppercase + badge status, judul Space Grotesk, lokasi, artis, harga mono.
  */
 export function ConcertCard({ concert, className }: { concert: Concert; className?: string }) {
   const from = price(concert);
@@ -48,9 +48,9 @@ export function ConcertCard({ concert, className }: { concert: Concert; classNam
               </Text>
             </View>
           ) : null}
-          {concert.organizer_name ? (
+          {concert.artist_name ? (
             <Text className="mt-0.5 text-xs text-muted-foreground/80" numberOfLines={1}>
-              {t('Common.byOrganizer', { organizer: concert.organizer_name })}
+              {concert.artist_name}
             </Text>
           ) : null}
           <View className="mt-auto border-t border-border pt-2">

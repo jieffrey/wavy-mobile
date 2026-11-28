@@ -17,6 +17,8 @@ interface SessionValue {
   /** true kalau sesi terakhir berakhir karena 401 (ditampilkan di layar login). */
   expired: boolean;
   signIn: (token: string, customer: Customer) => Promise<void>;
+  /** simpan profil baru (mis. setelah PATCH /me) tanpa mengubah token */
+  updateCustomer: (customer: Customer) => Promise<void>;
   signOut: () => void;
 }
 
@@ -81,11 +83,16 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     setStatus('signed-in');
   }, []);
 
+  const updateCustomer = useCallback(async (next: Customer) => {
+    await deviceStorage.set(CUSTOMER_KEY, JSON.stringify(next));
+    setCustomer(next);
+  }, []);
+
   const signOut = useCallback(() => endSession(false), [endSession]);
 
   const value = useMemo(
-    () => ({ status, customer, expired, signIn, signOut }),
-    [status, customer, expired, signIn, signOut]
+    () => ({ status, customer, expired, signIn, updateCustomer, signOut }),
+    [status, customer, expired, signIn, updateCustomer, signOut]
   );
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 }
